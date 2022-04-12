@@ -46,7 +46,7 @@
         <label for="access-token" title="required">
           Your Access Token
           <small>
-            (see <a href={DOC_LINK} target="_blank">this link<Launch size={12} /></a> to get one)
+            (see <a href={DOC_LINK} target="_blank" rel="noreferrer">this link<Launch size={12} /></a> to get one)
           </small>
           <sup class="error-text" title="required">*</sup>
         </label>
