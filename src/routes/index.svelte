@@ -43,11 +43,12 @@
   <section class="container centered no-padding">
     <article>
       <form action="" on:submit|preventDefault={handleOnSubmit}>
-        <label for="access-token">
+        <label for="access-token" title="required">
           Your Access Token
           <small>
             (see <a href={DOC_LINK} target="_blank">this link<Launch size={12} /></a> to get one)
           </small>
+          <sup class="error-text" title="required">*</sup>
         </label>
         <input
           bind:this={accessTokenInput}
@@ -64,7 +65,10 @@
         {#if $errorsContext?.accessToken}
           <small class="error-text">{$errorsContext.accessToken}</small>
         {/if}
-        <label for="destination">Destination</label>
+        <label for="destination" title="required">
+          Destination
+          <sup class="error-text">*</sup>
+        </label>
         <input
           bind:this={participantEmailInput}
           id="destination"
