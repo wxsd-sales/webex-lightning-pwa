@@ -2,10 +2,10 @@ import type { Writable } from 'svelte/store';
 import { get, writable } from 'svelte/store';
 import { getContext, setContext } from 'svelte';
 import { browser } from '$app/env';
-import { ErrorKeys, StorageKeys } from './types';
+import { ErrorKey, StorageKey } from './types';
 
 const storage = <T>(
-  key: StorageKeys,
+  key: StorageKey,
   initialValue: T | undefined = undefined,
   browserStorage: boolean | Storage = !browser || localStorage
 ): Writable<T | undefined> => {
@@ -32,7 +32,7 @@ const storage = <T>(
 };
 
 const accessToken = Symbol();
-const accessTokenWritable = storage<string>(StorageKeys.ACCESS_TOKEN);
+const accessTokenWritable = storage<string>(StorageKey.ACCESS_TOKEN);
 
 export function setAccessTokenContext(): void {
   return setContext(accessToken, accessTokenWritable);
@@ -53,14 +53,14 @@ export function getErrorsContext(): Writable<Record<string, string>> {
   return getContext(errors);
 }
 
-export function delErrorKey(key: ErrorKeys) {
+export function delErrorKey(key: ErrorKey) {
   errorsWritable.update((errors: Record<string, string>) => {
     delete errors[key];
     return errors;
   });
 }
 
-export function setErrorKey(key: ErrorKeys, value: string) {
+export function setErrorKey(key: ErrorKey, value: string) {
   errorsWritable.update((errors: Record<string, string>) => {
     errors[key] = value;
     return errors;
@@ -68,7 +68,7 @@ export function setErrorKey(key: ErrorKeys, value: string) {
 }
 
 const authorizedUser = Symbol();
-const authorizedUserWritable = storage<Record<string, unknown>>(StorageKeys.AUTHORIZED_USER);
+const authorizedUserWritable = writable<Record<string, unknown>>();
 
 export function setAuthorizedUserContext(): void {
   return setContext(authorizedUser, authorizedUserWritable);
@@ -76,6 +76,17 @@ export function setAuthorizedUserContext(): void {
 
 export function getAuthorizedUserContext(): Writable<Record<string, unknown>> {
   return getContext(authorizedUser);
+}
+
+const destination = Symbol();
+const destinationWritable = writable<string>();
+
+export function setDestinationContext(): void {
+  return setContext(destination, destinationWritable);
+}
+
+export function getDestinationContext(): Writable<string> {
+  return getContext(destination);
 }
 
 const webex = Symbol();

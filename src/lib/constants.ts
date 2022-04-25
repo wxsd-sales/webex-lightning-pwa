@@ -1,6 +1,32 @@
 export const DOC_LINK = 'https://developer.webex.com/docs/getting-started#accounts-and-authentication';
+
 export const WEBEX_API_ENDPOINT = 'https://webexapis.com/v1';
-export const VALID_ACCESS_TOKEN = /^([a-zA-Z0-9]{64})_(.*)_([a-z0-9-]{36})$/;
+
+export const WEBEX_CONFIG = {
+  logger: { level: 'silent' },
+  meetings: { reconnection: { enabled: true } }
+};
+
+export const AUDIO_OUTPUT = 'audiooutput';
+export const AUDIO_SOURCE = 'audioinput';
+export const VIDEO_SOURCE = 'videoinput';
+
+export const AUDIO_OUTPUT_PREFIX = 'Speaker';
+export const AUDIO_SOURCE_PREFIX = 'Microphone';
+export const VIDEO_SOURCE_PREFIX = 'Camera';
+
+export const MUTE_AUDIO = 'Mute Audio';
+export const UNMUTE_AUDIO = 'Unmute Audio';
+
+export const MUTE_VIDEO = 'Stop Video';
+export const UNMUTE_VIDEO = 'Start Video';
+
+export const MUTE_SHARE = 'Stop Share';
+export const UNMUTE_SHARE = 'Start Share';
+
+export const VALID_UUID = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
+export const VALID_ACCESS_TOKEN =
+  /^([a-zA-Z0-9]{64})_(.*)_([0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})$/;
 export const APP_PATTERN = /^https?:\/\/(?:teams|teams-stage|teams-unstable|teams-test).webex.com/;
 export const VALID_PHONE =
   /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/;

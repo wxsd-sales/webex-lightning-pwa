@@ -1,36 +1,62 @@
 <!--suppress CheckEmptyScriptTag -->
 <script lang="ts">
-  import Launch from 'carbon-icons-svelte/lib/Launch.svelte';
-  import CommunicationUnified from 'carbon-icons-svelte/lib/CommunicationUnified.svelte';
-  import { VALID_ACCESS_TOKEN, VALID_DESTINATION, DOC_LINK } from '../lib/constants';
-  import { delErrorKey, getAccessTokenContext, getErrorsContext, setErrorKey } from '../lib/stores';
-  import { ErrorKeys } from '../lib/types';
+  import {
+    getAuthorizedUserContext,
+    getAccessTokenContext,
+    getDestinationContext,
+    getErrorsContext,
+    getWebexContext,
+    setErrorKey,
+    delErrorKey
+  } from '../lib/stores';
+  import Main from '../components/Main/Main.svelte';
+  import { PeopleResource } from '../lib/webex/requestWrapper/people';
+  import { initializeWebex } from '../lib/webex/sdkWrapper/core';
+  import { ErrorKey, ErrorValue, WebexError } from '../lib/types';
   import type { AppComponent } from '../lib/types';
-  import Meet from '../components/Meet.svelte';
+  import Meet from '../components/Meet/Meet.svelte';
+  import Message from '../components/Message/Message.svelte';
 
+  const authorizedUserContext = getAuthorizedUserContext();
   const accessTokenContext = getAccessTokenContext();
+  const destinationContext = getDestinationContext();
   const errorsContext = getErrorsContext();
+  const webexContext = getWebexContext();
 
-  let appComponent: AppComponent = undefined;
-  let accessToken: string = $accessTokenContext;
-  let destination: string = undefined;
-  let accessTokenInput: HTMLInputElement;
-  let participantEmailInput: HTMLInputElement;
+  let activeAppView: AppComponent = 'main';
 
-  function validateAccessToken() {
-    return accessToken?.length > 0 && !accessTokenInput.checkValidity()
-      ? setErrorKey(ErrorKeys.ACCESS_TOKEN, 'Invalid access token.')
-      : delErrorKey(ErrorKeys.ACCESS_TOKEN);
-  }
-  function validateParticipantEmail() {
-    return destination?.length > 0 && !participantEmailInput.checkValidity()
-      ? setErrorKey(ErrorKeys.DESTINATION, 'Invalid destination.')
-      : delErrorKey(ErrorKeys.DESTINATION);
-  }
-
-  function handleOnSubmit() {
+  function onSubmitHook(accessToken, destination) {
     accessTokenContext.set(accessToken);
-    appComponent = 'meet';
+    destinationContext.set(destination);
+
+    const onFailure = (error) => {
+      if (error?.status === 401) {
+        setErrorKey(ErrorKey.ACCESS_TOKEN, ErrorValue.INVALID_EXPIRED_ACCESS_TOKEN);
+      } else if (error?.status >= 500) {
+        setErrorKey(ErrorKey.ACCESS_TOKEN, ErrorValue.UNEXPECTED_SERVER_ERROR);
+      } else if (error?.status >= 400) {
+        setErrorKey(ErrorKey.ACCESS_TOKEN, ErrorValue.UNEXPECTED_CLIENT_ERROR);
+      } else {
+        setErrorKey(ErrorKey.ACCESS_TOKEN, WebexError.INITIALIZATION);
+      }
+
+      activeAppView = 'main';
+    };
+
+    const onSuccess = (authorizedUser, webex) => {
+      authorizedUserContext.set(authorizedUser);
+      webexContext.set(webex);
+      delErrorKey(ErrorKey.ACCESS_TOKEN);
+
+      activeAppView = 'meet';
+    };
+
+    return Promise.all([
+      new PeopleResource($accessTokenContext).getMyOwnDetails({ callingData: true }),
+      initializeWebex($accessTokenContext)
+    ])
+      .then(([authorizedUser, webex]) => onSuccess(authorizedUser, webex))
+      .catch((e) => onFailure(e));
   }
 </script>
 
@@ -38,58 +64,10 @@
   <title>Webex Lightning PWA</title>
 </svelte:head>
 
-{#if appComponent == null}
-  <section class="container centered no-padding">
-    <article>
-      <form action="" on:submit|preventDefault={handleOnSubmit}>
-        <label for="access-token" title="required">
-          Your Access Token
-          <small>
-            (see <a href={DOC_LINK} target="_blank" rel="noreferrer">this link<Launch size={12} /></a> to get one)
-          </small>
-          <sup class="error-text" title="required">*</sup>
-        </label>
-        <input
-          bind:this={accessTokenInput}
-          type="password"
-          id="access-token"
-          name="access-token"
-          title="Input must match regex {VALID_ACCESS_TOKEN.source}"
-          pattern={VALID_ACCESS_TOKEN.source}
-          aria-invalid={!!$errorsContext?.accessToken || null}
-          on:blur={validateAccessToken}
-          bind:value={accessToken}
-          required
-        />
-        {#if $errorsContext?.accessToken}
-          <small class="error-text">{$errorsContext.accessToken}</small>
-        {/if}
-        <label for="destination" title="required">
-          Destination
-          <sup class="error-text">*</sup>
-        </label>
-        <input
-          bind:this={participantEmailInput}
-          id="destination"
-          name="destination"
-          placeholder="Webex meeting link, PMR, SIP or email address"
-          autocomplete="email"
-          title="Input must a valid Webex meeting link, PMR, SIP or email address"
-          pattern={VALID_DESTINATION.source}
-          aria-invalid={!!$errorsContext?.destination || null}
-          on:blur={validateParticipantEmail}
-          bind:value={destination}
-          required
-        />
-        {#if $errorsContext?.destination}
-          <small class="error-text">{$errorsContext.destination}</small>
-        {/if}
-        <button type="submit">
-          <CommunicationUnified class="icon" size={32} aria-label="Start" />
-        </button>
-      </form>
-    </article>
-  </section>
-{:else if appComponent === 'meet'}
-  <Meet {destination} />
+{#if activeAppView === 'main'}
+  <Main {onSubmitHook} errors={$errorsContext} accessToken={$accessTokenContext} destination={$destinationContext} />
+{:else if activeAppView === 'meet'}
+  <Meet destination={$destinationContext} />
+{:else if activeAppView === 'message'}
+  <Message destination={$destinationContext} />
 {/if}
