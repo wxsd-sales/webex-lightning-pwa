@@ -1,7 +1,6 @@
 <!--suppress CheckEmptyScriptTag -->
 <script lang="js">
-  import '@picocss/pico/css/pico.css';
-  import '../app.css';
+  import '../app.scss';
   import { onMount } from 'svelte';
   import themeSwitcher from '@picocss/pico/docs/js/src/theme-switcher';
   import {

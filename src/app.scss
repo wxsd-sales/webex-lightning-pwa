@@ -1,0 +1,158 @@
+/* Write your global styles here, in SCSS syntax. Variables and mixins from the src/variables.scss file are available here without importing */
+
+// Pico.css (https://picocss.com)
+@import '@picocss/pico/scss/pico';
+
+/*!
+ * Bootstrap Grid 5.1.3 (https://getbootstrap.com/)
+ * Copyright 2011-2021 The Bootstrap Authors
+ * Copyright 2011-2021 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+
+$include-column-box-sizing: true;
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px
+);
+
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import 'bootstrap/scss/functions';
+
+// 2. Include any default variable overrides here
+
+// 3. Include remainder of required Bootstrap stylesheets
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/mixins/lists';
+@import 'bootstrap/scss/mixins/breakpoints';
+@import 'bootstrap/scss/mixins/grid';
+@import 'bootstrap/scss/mixins/container';
+@import 'bootstrap/scss/mixins/utilities';
+
+// 4. Include any optional Bootstrap components as you like
+@import 'bootstrap/scss/vendor/rfs';
+@import 'bootstrap/scss/grid';
+@import 'bootstrap/scss/containers';
+@import 'bootstrap/scss/utilities';
+@import 'bootstrap/scss/utilities/api';
+
+/* Light-blue Light scheme */
+[data-theme='light'],
+:root:not([data-theme='dark']) {
+  --primary: #039be5;
+  --primary-hover: #0288d1;
+  --primary-focus: rgba(3, 155, 229, 0.125);
+  --primary-inverse: #fff;
+}
+
+/* Light-blue Dark scheme */
+[data-theme='dark'],
+:root:not([data-theme='light']) {
+  --primary: #039be5;
+  --primary-hover: #03a9f4;
+  --primary-focus: rgba(3, 155, 229, 0.25);
+  --primary-inverse: #fff;
+}
+
+/* Light-blue Dark scheme (Auto) */
+@media only screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --primary: #039be5;
+    --primary-hover: #03a9f4;
+    --primary-focus: rgba(3, 155, 229, 0.25);
+    --primary-inverse: #fff;
+  }
+}
+
+/* Light-blue Light scheme (Auto) */
+@media only screen and (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --primary: #039be5;
+    --primary-hover: #0288d1;
+    --primary-focus: rgba(3, 155, 229, 0.125);
+    --primary-inverse: #fff;
+  }
+}
+
+/* Light-blue (Common styles) */
+:root {
+  --border-radius: 0.5rem;
+  --primary: #039be5;
+  --form-element-active-border-color: var(--primary);
+  --form-element-focus-color: var(--primary-focus);
+  --switch-color: var(--primary-inverse);
+  --switch-checked-background-color: var(--primary);
+}
+
+.theme-switcher {
+  right: calc(var(--spacing) / 2 + var(--scrollbar-width, 0px));
+  top: var(--spacing);
+}
+
+.toggle {
+  position: fixed;
+  width: auto;
+  margin-bottom: 0;
+  padding: 0.75rem;
+  border-radius: 2rem;
+  box-shadow: var(--card-box-shadow);
+  line-height: 1;
+  text-align: right;
+}
+
+.toggle::after {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 0.15rem solid currentColor;
+  border-radius: 50%;
+  background: linear-gradient(to right, currentColor 0, currentColor 50%, transparent 50%);
+  content: '';
+  vertical-align: bottom;
+  transition: transform var(--transition);
+}
+
+.toggle i {
+  display: inline-block;
+  max-width: 0;
+  padding: 0;
+  overflow: hidden;
+  font-style: normal;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.toggle:focus,
+.toggle:hover {
+  max-width: 100%;
+  transition: background-color var(--transition), border-color var(--transition), color var(--transition),
+    box-shadow var(--transition);
+}
+
+.toggle:hover::after {
+  transform: rotate(180deg);
+}
+
+.toggle:hover i {
+  max-width: 100%;
+  padding: 0 calc(var(--spacing) / 2) 0 calc(var(--spacing) / 4);
+  transition: max-width var(--transition), padding var(--transition);
+}
+
+.toggle:focus {
+  box-shadow: var(--card-box-shadow), 0 0 0 0.2rem var(--secondary-focus);
+}
+
+@media (min-width: 576px) {
+  .toggle {
+    right: calc(var(--spacing) + var(--scrollbar-width, 0px));
+  }
+}
+
+.error-text {
+  color: var(--form-element-invalid-border-color);
+}
