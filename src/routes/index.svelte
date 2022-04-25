@@ -7,7 +7,6 @@
   import { ErrorKeys } from '../lib/types';
   import type { AppComponent } from '../lib/types';
   import Meet from '../components/Meet.svelte';
-  import Message from '../components/Message.svelte';
 
   const accessTokenContext = getAccessTokenContext();
   const errorsContext = getErrorsContext();
@@ -93,6 +92,4 @@
   </section>
 {:else if appComponent === 'meet'}
   <Meet {destination} />
-{:else if appComponent === 'message'}
-  <Message {destination} />
 {/if}
